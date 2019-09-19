@@ -21,3 +21,12 @@ booksql-laravel/composer.lock
 # DB
 !db/mysql/.gitkeep
 db/mysql/*
+
+# Vue
+booksql-vue/node_modules
+booksql-vue//dist
+booksql-vue/.env.local
+booksql-vue/.env.*.local
+booksql-vue/npm-debug.log*
+booksql-vue/yarn-debug.log*
+booksql-vue/yarn-error.log*

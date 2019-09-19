@@ -1,38 +1,43 @@
 #!/bin/bash
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 #WEB
-WEB_CONTAINER_NAME=booksql-laravel
-WEB_LOCAL_DIR=~/git/github/cursoGraphQLLaravelVue/booksql-laravel
+BACK_CONTAINER_NAME=booksql-laravel
+BACK_LOCAL_DIR=$SCRIPT_DIR/booksql-laravel
 
 echo -e "\nRemovendo containers, caso existam"
 docker-compose down
 
 # Testando se já existe arquivo de configuração local
-if [ ! -f "$WEB_LOCAL_DIR/.env" ]; then
+if [ ! -f "$BACK_LOCAL_DIR/.env" ]; then
     echo -e "Criando arquivo de configuração local .env "
-    cp "$WEB_LOCAL_DIR"/.env.dev "$WEB_LOCAL_DIR"/.env
+    cp "$BACK_LOCAL_DIR"/.env.dev "$BACK_LOCAL_DIR"/.env
 fi
 
 echo -e "\nCorrigindo permissao nas pastas"
 
 echo -e "\nAlterando grupo e proprietario da pasta do app"
-sudo chown $USER:www-data -R $WEB_LOCAL_DIR
+sudo chown $USER:www-data -R $BACK_LOCAL_DIR
 
 echo -e "\nAdicionando permissao de escrita para o grupo na pasta storage"
-sudo chmod o+w -R $WEB_LOCAL_DIR/storage
-sudo chmod g+w -R $WEB_LOCAL_DIR/storage
+sudo chmod o+w -R $BACK_LOCAL_DIR/storage
+sudo chmod g+w -R $BACK_LOCAL_DIR/storage
 
-if [ -d "$WEB_LOCAL_DIR/bootstrap/cache" ]; then
+if [ -d "$BACK_LOCAL_DIR/bootstrap/cache" ]; then
     echo -e "\nAdicionando permissao de escrita para na pasta do bootstrap"
-    sudo chmod g+w -R $WEB_LOCAL_DIR/bootstrap/cache
+    sudo chmod g+w -R $BACK_LOCAL_DIR/bootstrap/cache
 fi
 
-echo -e "\nConstruindo a imagem localmente"
+echo -e "\nConstruindo as imagens localmente"
 docker-compose build
 
-echo -e "\nInstalando dependências localmente"
-docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $WEB_CONTAINER_NAME composer self-update
-docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $WEB_CONTAINER_NAME composer install
+echo -e "\nInstalando dependências localmente - Laravel"
+docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $BACK_CONTAINER_NAME composer self-update
+docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $BACK_CONTAINER_NAME composer install
+
+echo -e "\nInstalando dependências localmente - Vue"
+docker run -i --rm -v booksql-vue:/app booksql-vue npm install
 
 echo -e "\nIniciando container"
 docker-compose up -d

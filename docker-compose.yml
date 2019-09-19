@@ -37,3 +37,15 @@ services:
       - booksql-mysql
     depends_on:
       - booksql-mysql
+  booksql-vue:
+    image: booksql-vue:latest
+    container_name: booksql-vue
+    build:
+      context: ./booksql-vue
+      dockerfile: Dockerfile
+    volumes:
+      - ./booksql-vue:/app
+    ports:
+      - "5000:8080"
+    depends_on:
+      - booksql-laravel
