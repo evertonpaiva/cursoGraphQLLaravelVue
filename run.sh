@@ -37,5 +37,4 @@ docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $WEB_CONTAINER_NAME co
 echo -e "\nIniciando container"
 docker-compose up -d
 
-echo -e "\nAcompanhe a instalacao em: docker logs -f $WEB_CONTAINER_NAME"
-echo -e "\nQuando necessario logar no container: docker exec -it $WEB_CONTAINER_NAME bash"
+echo -e "\nAcompanhe a instalacao em: docker-compose logs -f"
