@@ -1,45 +1,67 @@
 <template>
   <div class="home">
-    <ApolloQuery :query="require('@/graphql/queries/Categories.graphql')">
+    <ApolloQuery :query="categoriesQuery">
       <template slot-scope="{ result: { data, loading }, isLoading  }">
         <div v-if="isLoading">Loading...</div>
         <div v-else>
+          <a href="#" class="link-margin" @click.prevent="selectCategory('all')">All</a>
+          <a href="#" class="link-margin" @click.prevent="selectCategory('featured')">Featured</a>
           <a href="#" v-for="category of data.categories" :key="category.id"
-             @click="selectCategory(category.id)" class="link-margin">
+             @click.prevent="selectCategory(category.id)" class="link-margin">
             {{ category.id }}. {{ category.name }}
           </a>
         </div>
       </template>
     </ApolloQuery>
 
-    <!--<ApolloQuery :query="require('@/graphql/queries/Books.graphql')">
-      <template slot-scope="{ result: { data, loading }, isLoading  }">
-        <div v-if="isLoading">Loading...</div>
-        <div v-else>
-          <div href="#" v-for="book of data.books" :key="book.id" class="link-margin">
-            {{ book.id }}. {{ book.title }}
+    <div v-if="selectedCategory === 'all'">
+      <ApolloQuery :query="query">
+        <template slot-scope="{ result: { data, loading }, isLoading  }">
+          <div v-if="isLoading">Loading...</div>
+          <div v-else>
+            <div href="#" v-for="book of data.books" :key="book.id" class="link-margin">
+              {{ book.id }}. {{ book.title }}
+            </div>
           </div>
-        </div>
-      </template>
-    </ApolloQuery>-->
+        </template>
+      </ApolloQuery>'
+    </div>
 
-    <ApolloQuery :query="require('@/graphql/queries/Category.graphql')" :variables="{ id: selectedCategory }">
-      <template slot-scope="{ result: { data, loading }, isLoading  }">
-        <div v-if="isLoading">Loading...</div>
-        <div v-else>
-          <div href="#" v-for="book of data.category.books" :key="book.id" class="link-margin">
-            {{ book.id }}. {{ book.title }}
+    <div v-else-if="selectedCategory === 'featured'">
+      <ApolloQuery :query="query" :variables="{ featured: true }">
+        <template slot-scope="{ result: { data, loading }, isLoading  }">
+          <div v-if="isLoading">Loading...</div>
+          <div v-else>
+            <div href="#" v-for="book of data.booksByFeatured" :key="book.id" class="link-margin">
+              {{ book.id }}. {{ book.title }}
+            </div>
           </div>
-        </div>
-      </template>
-    </ApolloQuery>
+        </template>
+      </ApolloQuery>'
+    </div>
+
+    <div v-else>
+      <ApolloQuery :query="query" :variables="{ id: selectedCategory }">
+        <template slot-scope="{ result: { data, loading }, isLoading  }">
+          <div v-if="isLoading">Loading...</div>
+          <div v-else>
+            <div href="#" v-for="book of data.category.books" :key="book.id" class="link-margin">
+              {{ book.id }}. {{ book.title }}
+            </div>
+          </div>
+        </template>
+      </ApolloQuery>
+    </div>
 
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import gql from 'graphql-tag'
+import categoryQuery from '@/graphql/queries/Category.graphql'
+import categoriesQuery from '@/graphql/queries/Categories.graphql'
+import booksQuery from '@/graphql/queries/Books.graphql'
+import booksFeaturedQuery from '@/graphql/queries/BooksFeatured.graphql'
 
 export default {
   name: 'home',
@@ -48,20 +70,24 @@ export default {
   },
   data() {
     return {
-        selectedCategory: 1,
+        categoryQuery,
+        categoriesQuery,
+        booksQuery,
+        booksFeaturedQuery,
+        selectedCategory: 'all',
+        query: booksQuery,
         categories: []
     }
   },
-  apollo: {
-      categories: gql`{
-        categories {
-            id
-            name
-        }
-      }`,
-  },
   methods: {
       selectCategory(category) {
+          if(category === 'all'){
+            this.query = booksQuery
+          } else if (category === 'featured') {
+            this.query = booksFeaturedQuery
+          } else {
+            this.query = categoryQuery
+          }
           this.selectedCategory = category
       }
   }
