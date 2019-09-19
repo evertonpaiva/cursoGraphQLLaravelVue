@@ -39,7 +39,7 @@ docker run -i --rm -v booksql-laravel:/app -e APP_ENV=dev $BACK_CONTAINER_NAME c
 echo -e "\nInstalando dependências localmente - Vue"
 docker run -i --rm -v booksql-vue:/app booksql-vue npm install
 
-echo -e "\nIniciando container"
+echo -e "\nIniciando containers"
 docker-compose up -d
 
 echo -e "\nAcompanhe a instalacao em: docker-compose logs -f"
