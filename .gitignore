@@ -19,4 +19,4 @@ booksql-laravel/.phpunit.result.cache
 
 # DB
 !db/mysql/.gitkeep
-#db/mysql/*
+db/mysql/*
