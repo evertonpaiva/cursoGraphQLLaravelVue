@@ -9,6 +9,12 @@ type Query {
     user(id: ID @eq): User @find(model: "App\\User")
 
     books: [Book] @all
+    book(id: ID @eq): Book @find(model: "App\\Book")
+    booksByFeatured(featured: Boolean! @eq): [Book] @all
+    someComplexQuery(search: String!): [Book]
+
+    categories: [Category] @all
+    category(id: ID @eq): Category @find(model: "App\\Category")
 }
 
 type User {
