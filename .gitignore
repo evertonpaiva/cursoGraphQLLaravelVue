@@ -16,6 +16,7 @@ booksql-laravel/npm-debug.log
 booksql-laravel/yarn-error.log
 booksql-laravel/.env
 booksql-laravel/.phpunit.result.cache
+booksql-laravel/composer.lock
 
 # DB
 !db/mysql/.gitkeep
