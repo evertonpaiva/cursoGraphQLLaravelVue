@@ -1,0 +1,39 @@
+# v2 syntax
+version: '2'
+services:
+  booksql-mysql:
+    image: mysql:5.7.26
+    restart: always
+    container_name: booksql-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
+  booksql-laravel:
+    image: booksql-laravel:latest
+    container_name: booksql-laravel
+    build:
+      context: ./booksql-laravel
+      dockerfile: Dockerfile
+    volumes:
+      - ./booksql-laravel:/app
+    ports:
+      - "8099:80"
+    links:
+      - booksql-mysql
+    depends_on:
+      - booksql-mysql
+  booksql-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    container_name: booksql-phpmyadmin
+    ports:
+      - "8090:80"
+    environment:
+      - PMA_HOST=booksql-mysql
+    links:
+      - booksql-mysql
+    depends_on:
+      - booksql-mysql

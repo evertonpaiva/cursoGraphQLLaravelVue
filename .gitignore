@@ -1,0 +1,22 @@
+# IDE's
+.idea
+
+# App
+booksql-laravel/node_modules
+booksql-laravel/public/hot
+booksql-laravel/public/storage
+booksql-laravel/storage/*.key
+booksql-laravel/vendor
+booksql-laravel/.idea
+booksql-laravel/.vscode
+booksql-laravel/.vagrant
+booksql-laravel/Homestead.json
+booksql-laravel/Homestead.yaml
+booksql-laravel/npm-debug.log
+booksql-laravel/yarn-error.log
+booksql-laravel/.env
+booksql-laravel/.phpunit.result.cache
+
+# DB
+!db/mysql/.gitkeep
+db/mysql/*
