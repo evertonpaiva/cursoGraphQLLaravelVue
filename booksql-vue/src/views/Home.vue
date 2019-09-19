@@ -1,15 +1,39 @@
 <template>
   <div class="home">
     <ApolloQuery :query="require('@/graphql/queries/Categories.graphql')">
-      <template slot-scope="{ result: { data, loading } }">
-        <div v-if="loading">Loading...</div>
-        <ul v-else>
-          <li v-for="category of data.categories" :key="category.id" class="user">
-            {{ category.id }} {{ category.name }}
-          </li>
-        </ul>
+      <template slot-scope="{ result: { data, loading }, isLoading  }">
+        <div v-if="isLoading">Loading...</div>
+        <div v-else>
+          <a href="#" v-for="category of data.categories" :key="category.id"
+             @click="selectCategory(category.id)" class="link-margin">
+            {{ category.id }}. {{ category.name }}
+          </a>
+        </div>
       </template>
     </ApolloQuery>
+
+    <!--<ApolloQuery :query="require('@/graphql/queries/Books.graphql')">
+      <template slot-scope="{ result: { data, loading }, isLoading  }">
+        <div v-if="isLoading">Loading...</div>
+        <div v-else>
+          <div href="#" v-for="book of data.books" :key="book.id" class="link-margin">
+            {{ book.id }}. {{ book.title }}
+          </div>
+        </div>
+      </template>
+    </ApolloQuery>-->
+
+    <ApolloQuery :query="require('@/graphql/queries/Category.graphql')" :variables="{ id: selectedCategory }">
+      <template slot-scope="{ result: { data, loading }, isLoading  }">
+        <div v-if="isLoading">Loading...</div>
+        <div v-else>
+          <div href="#" v-for="book of data.category.books" :key="book.id" class="link-margin">
+            {{ book.id }}. {{ book.title }}
+          </div>
+        </div>
+      </template>
+    </ApolloQuery>
+
   </div>
 </template>
 
@@ -24,6 +48,7 @@ export default {
   },
   data() {
     return {
+        selectedCategory: 1,
         categories: []
     }
   },
@@ -35,5 +60,16 @@ export default {
         }
       }`,
   },
+  methods: {
+      selectCategory(category) {
+          this.selectedCategory = category
+      }
+  }
 }
 </script>
+
+<style>
+  .link-margin {
+    margin-right: 24px;
+  }
+</style>
