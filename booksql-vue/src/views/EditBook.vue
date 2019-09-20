@@ -37,6 +37,7 @@
           </template>
         </ApolloQuery>
       </div>
+
       <div class="form-group">
         <button type="submit">Update book</button>
       </div>
@@ -46,73 +47,76 @@
 </template>
 
 <script>
-import updateBook from '@/graphql/mutations/UpdateBook.graphql'
-import book from '@/graphql/queries/Book.graphql'
+    import updateBook from '@/graphql/mutations/UpdateBook.graphql'
+    import book from '@/graphql/queries/Book.graphql'
 
-export default {
-  data() {
-    return {
-      title: '',
-      author: '',
-      image: '',
-      description: '',
-      link: '',
-      featured: false,
-      category: 1,
-      book: null
-    }
-  },
-  apollo: {
-    // Advanced query with parameters
-    // The 'variables' method is watched by vue
-    book: {
-      query: book,
-      // Reactive parameters
-      variables () {
-        if (this.$route && this.$route.params) {
-          return {
-              id: this.$route.params.id
-          }
+    export default {
+
+        data() {
+            return {
+                title: '',
+                author: '',
+                image: '',
+                description: '',
+                link: '',
+                featured: false,
+                category: 1,
+                book: null
+            }
+        },
+        apollo: {
+            // Advanced query with parameters
+            // The 'variables' method is watched by vue
+            book: {
+                query: book,
+                // Reactive parameters
+                variables () {
+                    if (this.$route && this.$route.params) {
+                        return {
+                            id: this.$route.params.id
+                        }
+                    }
+                },
+
+                // Optional result hook
+                result ({ data: {book} }) {
+                    this.title = book.title
+                    this.author = book.author
+                    this.image = book.image
+                    this.description = book.description
+                    this.link = book.link
+                    this.featured = book.featured
+                    this.category = book.category.id
+                },
+            },
+        },
+        methods: {
+            editBook() {
+                this.$apollo.mutate({
+                    // Query
+                    mutation: updateBook,
+                    // Parameters
+                    variables: {
+                        id: this.$route.params.id,
+                        title: this.title,
+                        author: this.author,
+                        image: this.image,
+                        link: this.link,
+                        description: this.description,
+                        featured: this.featured,
+                        category: this.category
+                    }
+                }).then((data) => {
+                    console.log(data)
+                    this.$router.push(`/books/${this.$route.params.id}`)
+                }).catch((error) => {
+                    console.error(error)
+                })
+            }
         }
-      },
-      // Optional result hook
-      result ({ data: {book} }) {
-        this.title = book.title;
-        this.author = book.author;
-        this.image = book.image;
-        this.description = book.description;
-        this.link = book.link;
-        this.featured = book.featured;
-        this.category = book.category.id;
-      },
-    },
-  },
-  methods: {
-    editBook() {
-      this.$apollo.mutate({
-        // Query
-        mutation: updateBook,
-        // Parameters
-        variables: {
-          id: this.$route.params.id,
-          title: this.title,
-          author: this.author,
-          image: this.image,
-          link: this.link,
-          description: this.description,
-          featured: this.featured,
-          category: this.category
-        }
-      }).then((data) => {
-        console.log(data);
-        this.$router.push(`/books/${this.$route.params.id}`)
-      }).catch((error) => {
-        console.error(error)
-      })
     }
-  }
-}
 </script>
+
 
 <style scoped>
   .form-group {
